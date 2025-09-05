@@ -1,8 +1,13 @@
 #pragma once
 
 #include <cstdint>
-
+#include <string_view>
+#include <cstring>
+#include <string>
+#include <filesystem>
 #include <imgui.h>
+
+namespace fs = std::filesystem;
 
 class WindowClass
 {

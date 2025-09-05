@@ -3,6 +3,8 @@
 #include <string>
 #include <algorithm>
 #include <cstring>
+#include <fstream>
+#include <sstream>
 
 #include <fmt/format.h>
 #include <imgui.h>
@@ -150,21 +152,39 @@ void WindowClass::DrawInfo()
 
     const auto file_extension = GetFileExtension(currentFilename);
     ImGui::Text("Opened file %s | File extension %s", currentFilename.data(), file_extension.data());
+
 }
 
 void WindowClass::SaveToFile(std::string_view filename)
 {
+    auto out = std::ofstream{filename.data()};
 
+    if (out.is_open())
+    {
+        out << textBuffer;
+        out.close();
+    }
 }
 
 void WindowClass::LoadFromFile(std::string_view filename)
 {
+    auto in = std::ifstream{filename.data()};
 
+    if (in.is_open())
+    {
+        auto buffer = std::stringstream{};
+        buffer << in.rdbuf();
+        std::memcpy(textBuffer, buffer.str().data(), bufferSize);
+        in.close();
+    }
 }
 
 std::string WindowClass::GetFileExtension(std::string_view filename)
 {
-    return ""; //space holder for now
+    //initialize with input filename
+    const auto file_path = fs::path{filename};
+
+    return file_path.extension().string();
 }
 
 void render(WindowClass &window_obj)
